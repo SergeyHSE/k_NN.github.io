@@ -5,7 +5,6 @@ Created on Wed Jul  5 00:29:07 2023
 @author: SergeyHSE
 """
 from sklearn.datasets import make_moons
-from sklearn.model_selection import KFold
 from sklearn.model_selection import cross_val_score
 import numpy as np
 from sklearn.model_selection import GridSearchCV
