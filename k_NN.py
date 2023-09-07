@@ -133,3 +133,26 @@ with open("dir_with_mnist_data_files/train-labels-idx1-ubyte.gz", "wb") as file:
 
 
 from mnist import MNIST
+
+mndata = MNIST('./dir_with_mnist_data_files', gz=True)
+images, labels = mndata.load_training()
+images, labels = np.array(images), np.array(labels)
+
+plt.figure(figsize=(8,8), dpi=100)
+plt.imshow(images[0].reshape(28, 28))
+
+X_train, X_test, y_train, y_test = train_test_split(images, labels, test_size=0.2, random_state=10)
+
+knn_mnist = KNeighborsClassifier(n_neighbors=30)
+knn_mnist.fit(X_train, y_train)
+y_pred_mnist = knn_mnist.predict(X_test)
+accuracy_score_mnist = accuracy(y_test, y_pred_mnist)
+accuracy_score_mnist
+
+plt.figure(figsize=(6, 9), dpi=100)
+plt.bar(['Accuracy'], [accuracy_score_mnist], color=(0.2, 0.4, 0.6))
+plt.ylabel('Accuracy')
+plt.title('Accuracy score')
+plt.ylim(0, 1)
+plt.text(0, accuracy_score, f'{accuracy_score_mnist:.2f}', ha='center', fontsize=16, color='black')
+plt.show()
