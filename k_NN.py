@@ -84,16 +84,52 @@ This field contains information about the metric value for each parameter.
 """
 
 def train_grid_search(X, y):
-    def_searcher = GridSearchCV(KNeighborsClassifier(), param_grid = {'n_neighbors' : [i for i in range(1,21)]})
-    def_searcher.fit(X_train,y_train)
-    return def_searcher.cv_results_['mean_test_score']
+    param_grid = {'n_neighbors': list(range(1, 21))}
+    knn = KNeighborsClassifier()
+    grid_search = GridSearchCV(knn, param_grid, cv=5)
+    grid_search.fit(X, y)
+    mean_test_scores = grid_search.cv_results_['mean_test_score']
+    return mean_test_scores
 
 mean_test_scores = []
-for i in range(1000):
-    X, y = make_moons(n_samples = 1000, noise = 0.5)
-    mean_test_score = train_grid_search(X, y)
+for i in range(1, 21):
+    mean_test_score = train_grid_search(X_train, y_train)
     mean_test_scores.append(mean_test_score)
 
 mean_test_scores = np.array(mean_test_scores)
-plt.plot(np.arange(1, 21), np.mean(mean_test_scores, axis = 0))
+mean_scores_mean = np.mean(mean_test_scores, axis=0)
 
+plt.figure(figsize=(9,6), dpi=100)
+plt.plot(np.arange(1, 21), mean_scores_mean)
+plt.xlabel('Number of Neighbors')
+plt.ylabel('Mean Test Score')
+plt.title('Mean Test Score vs Number of Neighbors')
+plt.grid(True)
+plt.show()
+
+"""
+This is second part of our case
+We will work with 'MNIST data'
+We need calculate accuracy score
+"""
+
+# load python 'mnist' if you have not it
+
+!pip install python-mnist
+!mkdir dir_with_mnist_data_files
+
+import requests
+
+image_url = "http://yann.lecun.com/exdb/mnist/train-images-idx3-ubyte.gz"
+label_url = "http://yann.lecun.com/exdb/mnist/train-labels-idx1-ubyte.gz"
+
+response = requests.get(image_url)
+with open("dir_with_mnist_data_files/train-images-idx3-ubyte.gz", "wb") as file:
+    file.write(response.content)
+
+response = requests.get(label_url)
+with open("dir_with_mnist_data_files/train-labels-idx1-ubyte.gz", "wb") as file:
+    file.write(response.content)
+
+
+from mnist import MNIST
